@@ -21,7 +21,7 @@ local function key( event )
         end
         if not ( left == 0 and right == 0 ) and not visual.jumping then
             --visual:setSequence( "walk" )
-            --visual:play()           
+            --visual:play()
         end
         if "up" == name or "w" == name then
             up = -acceleration
@@ -31,11 +31,11 @@ local function key( event )
         end
 
     elseif phase == "up" then
-        if "left" == name or "a" == name then 
-            left = 0 
+        if "left" == name or "a" == name then
+            left = 0
         end
-        if "right" == name or "d" == name then 
-            right = 0 
+        if "right" == name or "d" == name then
+            right = 0
         end
         if "up" == name or "w" == name then
             up = 0
@@ -50,6 +50,37 @@ local function key( event )
     end
     lastEvent = event
 end
+
+local _FORCE = 500
+
+local function axis( event )
+    local number = event.axis.number
+    local value = event.normalizedValue
+    --print(number, value)
+    if number == 1 then
+        if value == 0 then
+            visual:setLinearVelocity(0,0)
+            visual.angularVelocity = 0
+            transition.to(visual, {rotation=0})
+
+        elseif value > 0 then
+            visual:applyForce(  number/_FORCE, 0, visual.x, visual.y )
+        else
+            visual:applyForce( -number/_FORCE, 0, visual.x, visual.y )
+        end
+    elseif number ==2 then
+        if value == 0 then
+            visual:setLinearVelocity(0,0)
+            visual.angularVelocity = 0
+            transition.to(visual, {rotation=0})
+        elseif value > 0 then
+            visual:applyForce(  0, number/_FORCE, visual.x, visual.y )
+        else
+            visual:applyForce(  0, -number/_FORCE, visual.x, visual.y )
+        end
+    end
+end
+
 
 local function enterFrame()
     -- Do this every frame
@@ -68,9 +99,10 @@ end
 
 ---------------------------
 -- Add our key/joystick listeners
-Runtime:addEventListener( "key", key )
-Runtime:addEventListener( "enterFrame", enterFrame )
+-- Runtime:addEventListener( "key", key )
+-- Runtime:addEventListener( "enterFrame", enterFrame )
+Runtime:addEventListener( "axis", axis )
 
 UI.enterFrame = enterFrame
 UI.key = key
-
+UI.axis = axis
