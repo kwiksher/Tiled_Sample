@@ -50,9 +50,9 @@ function M.newButton( key, radius, systemDir )
 	return instance
 end
 
-function M.newStick( startAxis, innerRadius, outerRadius, systemDir )
+function M.newStick( _startAxis, innerRadius, outerRadius, systemDir )
 
-	startAxis = startAxis or 1
+	local startAxis = _startAxis or 1
 	innerRadius, outerRadius = innerRadius or 48, outerRadius or 96
 	local instance = display.newGroup()
 
@@ -63,7 +63,7 @@ function M.newStick( startAxis, innerRadius, outerRadius, systemDir )
 		outerArea:setFillColor( 0.2, 0.2, 0.2, 0.9 )
 		outerArea:setStrokeColor( 1, 1, 1, 1 )
 	else
-		outerArea = display.newImage( instance, outerRadius, systemDir, 0, 0)
+		outerArea = display.newImage( instance, outerRadius:gsub('//', '/'), systemDir, 0, 0)
 		outerRadius = ( outerArea.contentWidth + outerArea.contentHeight ) * 0.25
 	end
 
@@ -74,7 +74,7 @@ function M.newStick( startAxis, innerRadius, outerRadius, systemDir )
 		joystick.strokeWidth = 6
 		joystick:setStrokeColor( 1, 1, 1, 1 )
 	else
-		joystick = display.newImage( instance, innerRadius,systemDir, 0, 0 )
+		joystick = display.newImage( instance, innerRadius:gsub('//', '/'),systemDir, 0, 0 )
 		innerRadius = ( joystick.contentWidth + joystick.contentHeight ) * 0.25
 	end
 
@@ -108,18 +108,22 @@ function M.newStick( startAxis, innerRadius, outerRadius, systemDir )
 			stage:setFocus( nil, event.id )
 			self.isFocus = false
 		end
-		
+
 		instance.axisX = self.x / stopRadius
 		instance.axisY = self.y / stopRadius
-		local axisEvent
+		local axisEvent = nil
 		if not ( self.y == ( self._y or 0 ) ) then
-			axisEvent = { name = "axis", axis = { number = startAxis }, normalizedValue = instance.axisX }
+			axisEvent = { name = "axis", axis = 1 , normalizedValue = instance.axisX }
+			--print("axisEvent.axis.number",axisEvent.axis)
 			Runtime:dispatchEvent( axisEvent )
 		end
 		if not ( self.x == ( self._x or 0 ) ) then
-			axisEvent = { name = "axis", axis = { number = startAxis+1 }, normalizedValue = instance.axisY }
+			axisEvent = { name = "axis", axis = 2 , normalizedValue = instance.axisY }
+			--print("axisEvent.axis.number",axisEvent.axis)
 			Runtime:dispatchEvent( axisEvent )
 		end
+
+
 		self._x, self._y = self.x, self.y
 		return true
 	end

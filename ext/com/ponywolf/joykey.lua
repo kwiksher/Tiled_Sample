@@ -30,8 +30,9 @@ map["axis4+"] = "s"
 
 -- Capture the axis event
 local function axis( event )
-	local num = event.axis.number or 1
-	local name = "axis" .. num
+	if event.axis == nil then return false end
+	local num = event.axis or 1
+	local name = "axis" .. tostring(num)
 	local value = event.normalizedValue
 	local oppositeAxis = "none"
 
@@ -49,7 +50,9 @@ local function axis( event )
 		event.keyName = map[name .. "-"]
 		oppositeAxis = map[name .. "+"]
 	end
-
+	--
+	if event.keyName == nil then return false end
+	--
 	if math.abs(value) > deadZone then
 		-- Throw the opposite axis if it was last pressed
 		if eventCache[oppositeAxis] then
