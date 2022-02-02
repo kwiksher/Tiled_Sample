@@ -49,6 +49,5 @@ layer.tileSet.alpha = 0
 -- use the block animation of Kwik. the centerBlock of the tiled map is disabled
 --
 local block = layer.map:getObjects( { name="centerBlock" } )
-layer.block.x = block.x
-layer.block.y = block.y
 block.alpha = 0 -- or removeSelf()
+layer.block.x, layer.block.y = block:localToContent(0,0)
